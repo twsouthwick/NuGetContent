@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <!-- Required elements-->
+        <id>Swick.NuGetContentExtractor</id>
+        <version></version>
+        <description>This library helps users migrate from packages that rely on Content files that don't work with PackageReference.</description>
+        <authors>Taylor Southwick</authors>
+
+        <!-- Optional elements -->
+        <!-- ... -->
+    </metadata>
+    <files>
+        <file src="Build\*" target="Build\" />
+    </files>
+</package>

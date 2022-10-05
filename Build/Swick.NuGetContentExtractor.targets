@@ -1,0 +1,17 @@
+<Project>
+    <ItemGroup>
+        <PackageReference Include="@(JavascriptLibrary)" GeneratePathProperty="true" />
+    </ItemGroup>
+
+    <Target Name="AddJavascriptContentFiles" BeforeTargets="CoreCompile">
+        <ItemGroup>
+            <__KnownLibrary Include="jQuery" Path="$(PkgjQuery)" />
+
+            <__KnownLibrary Remove="@(__KnownLibrary)" Condition=" '%(__KnownLibrary.Path)' == '' " />
+        </ItemGroup>
+
+        <ItemGroup>
+            <__JavascriptFiles Include="%(__KnownLibrary.Path)\Content\**\*" />
+        </ItemGroup>
+    </Target>
+</Project>
