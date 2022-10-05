@@ -1,17 +1,25 @@
 <Project>
+
+  <Target Name="AddJavascriptContentFiles" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-        <PackageReference Include="@(JavascriptLibrary)" GeneratePathProperty="true" />
+      <PackageReference Update="@(PackageReference)" GeneratePathProperty="true" Condition=" '%(PackageReference.AddContentFiles)' == 'true' " />
+    </ItemGroup>
+    <ItemGroup>
+      <__KnownLibrary Include="jQuery" PackagePath="$(PkgjQuery)" />
+
+      <__KnownLibrary Remove="@(__KnownLibrary)" Condition=" '%(__KnownLibrary.PackagePath)' == '' " />
     </ItemGroup>
 
-    <Target Name="AddJavascriptContentFiles" BeforeTargets="CoreCompile">
-        <ItemGroup>
-            <__KnownLibrary Include="jQuery" Path="$(PkgjQuery)" />
+    <ItemGroup>
+      <__ContentFiles Include="%(__KnownLibrary.PackagePath)\Content\**\*">
+        <BasePath>%(__KnownLibrary.PackagePath)\Content</BasePath>
+      </__ContentFiles>
 
-            <__KnownLibrary Remove="@(__KnownLibrary)" Condition=" '%(__KnownLibrary.Path)' == '' " />
-        </ItemGroup>
-
-        <ItemGroup>
-            <__JavascriptFiles Include="%(__KnownLibrary.Path)\Content\**\*" />
-        </ItemGroup>
-    </Target>
+      <Content Include="@(__ContentFiles)">
+        <Link>$([MSBuild]::MakeRelative(%(BasePath),%(Identity)))</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    
+  </Target>
 </Project>
