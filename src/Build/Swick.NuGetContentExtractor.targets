@@ -2,8 +2,8 @@
 
   <Target Name="AddNugetContentFiles" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-      <!-- Get all PackageReferences that have 'AddContentFiles' == 'true' -->
-      <_ContentPkgProperties Include="Pkg$([System.String]::Copy('%(Identity)').Replace('.','_'))" Condition="'%(PackageReference.AddContentFiles)' == 'true'">
+      <!-- Get all PackageReferences that have 'CopyContentFiles' == 'true' -->
+      <_ContentPkgProperties Include="Pkg$([System.String]::Copy('%(Identity)').Replace('.','_'))" Condition="'%(PackageReference.CopyContentFiles)' == 'true'">
         <PackageName>%(Identity)</PackageName>
       </_ContentPkgProperties>
 
