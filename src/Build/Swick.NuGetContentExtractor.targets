@@ -1,25 +1,35 @@
 <Project>
 
-  <Target Name="AddJavascriptContentFiles" BeforeTargets="AssignTargetPaths">
+  <Target Name="AddNugetContentFiles" BeforeTargets="AssignTargetPaths">
     <ItemGroup>
-      <PackageReference Update="@(PackageReference)" GeneratePathProperty="true" Condition=" '%(PackageReference.AddContentFiles)' == 'true' " />
+      <!-- Get all PackageReferences that have 'AddContentFiles' == 'true' -->
+      <_ContentPkgProperties Include="Pkg$([System.String]::Copy('%(Identity)').Replace('.','_'))" Condition="'%(PackageReference.AddContentFiles)' == 'true'">
+        <PackageName>%(Identity)</PackageName>
+      </_ContentPkgProperties>
+
+      <!-- Get package root if available -->
+      <_ContentPkgProperties Update="@(_ContentPkgProperties)" PackageRootPath="$(%(_ContentPkgProperties.Identity))" />
+
+      <!-- Filter out packages that need GeneratePathProperty -->
+      <_ValidContentPkgProperties Include="@(_ContentPkgProperties)" Condition=" '%(PackageRootPath)' != '' " />
+      <_InvalidContentPkgProperties Include="@(_ContentPkgProperties)" Condition=" '%(PackageRootPath)' == '' " />
     </ItemGroup>
-    <ItemGroup>
-      <__KnownLibrary Include="jQuery" PackagePath="$(PkgjQuery)" />
 
-      <__KnownLibrary Remove="@(__KnownLibrary)" Condition=" '%(__KnownLibrary.PackagePath)' == '' " />
-    </ItemGroup>
+    <Warning 
+      Condition=" '@(_InvalidContentPkgProperties)' != '' "
+      Text="%(_InvalidContentPkgProperties.PackageName) does not contain a tools directory and thus needs 'GeneratePathProperty' == 'true' " />
 
-    <ItemGroup>
-      <__ContentFiles Include="%(__KnownLibrary.PackagePath)\Content\**\*">
-        <BasePath>%(__KnownLibrary.PackagePath)\Content</BasePath>
-      </__ContentFiles>
+    <ItemGroup Condition=" '@(_ValidContentPkgProperties)' != '' ">
+      <_ContentFiles Include="%(_ValidContentPkgProperties.PackageRootPath)\Content\**\*">
+        <BasePath>%(_ValidContentPkgProperties.PackageRootPath)\Content</BasePath>
+        <PackageIdentity>%(_ValidContentPkgProperties.PackageName)</PackageIdentity>
+      </_ContentFiles>
 
-      <Content Include="@(__ContentFiles)">
+      <Content Include="@(_ContentFiles)">
         <Link>$([MSBuild]::MakeRelative(%(BasePath),%(Identity)))</Link>
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
-    
+
   </Target>
 </Project>

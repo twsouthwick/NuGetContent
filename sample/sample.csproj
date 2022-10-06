@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="jQuery" Version="3.6.0" AddContentFiles="true" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.13.0" AddContentFiles="true" />
   </ItemGroup>
 
   <Import Project="../src/Build/Swick.NuGetContentExtractor.targets" />
